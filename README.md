@@ -10,6 +10,13 @@ Python Fundamentos Para Análise de Dados 3.0
     - Sequência
     - Decisão
     - Iteração (Repetição)
-    
+
   . Programação Oriendada a Objeto
-    - 
+    - Classe
+    - Objeto (instância de uma classe)
+    - Atributos (características)
+    - Métodos (funções)
+    - Mensagem
+    - Herança (subclasse X superclasse)
+    - Polimorfismo (classes derivadas)
+    - Encapsulamento
