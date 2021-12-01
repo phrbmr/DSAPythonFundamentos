@@ -1,79 +1,156 @@
-#Classes, Objetos, Atributos e Métodos
-#Capítulo 5: Aulas 1, 2 e 3
+# Hangman Game (Jogo da Forca) 
+# Programação Orientada a Objetos
 
-class Livro():
-  def __init__(self,):
-    self.titulo = "O Monge e o Executivo"
-    self.isbn = 9988888
-    print("Construtor chamado para criar um objeto desta classe\n")
+# Import
+import random
 
-  def imprime(self):
-    print("Foi criado o livro %s e ISBM %d" %(self.titulo, self.isbn))
+# Board (tabuleiro)
+board = ['''
 
-Livro1 = Livro()
-print(type(Livro1))
-print(Livro1.titulo)
-Livro1.imprime()
+>>>>>>>>>>Hangman<<<<<<<<<<
+
++---+
+|   |
+    |
+    |
+    |
+    |
+=========''', '''
+
++---+
+|   |
+O   |
+    |
+    |
+    |
+=========''', '''
+
++---+
+|   |
+O   |
+|   |
+    |
+    |
+=========''', '''
+
+ +---+
+ |   |
+ O   |
+/|   |
+     |
+     |
+=========''', '''
+
+ +---+
+ |   |
+ O   |
+/|\  |
+     |
+     |
+=========''', '''
+
+ +---+
+ |   |
+ O   |
+/|\  |
+/    |
+     |
+=========''', '''
+
+ +---+
+ |   |
+ O   |
+/|\  |
+/ \  |
+     |
+=========''']
 
 
-class Livro():
-  def __init__(self, titulo, isbn):
-    self.titulo = titulo
-    self.isbn = isbn
-    print("Construtor chamado para criar um objeto desta classe\n")
-
-  def imprime(self):
-    print("Foi criado o livro %s e ISBM %d \n" %(self.titulo, self.isbn))
-
-Livro2 = Livro("A Menina que Roubava Livros", 77886611)
-print(type(Livro2))
-print(Livro2.titulo)
-Livro2.imprime()
-
-
-class Funcionarios:
-    def __init__(self, nome, salario):
-        self.nome = nome
-        self.salario = salario
-
-    def listFunc(self):
-        print("O nome do funcionário é " + self.nome + " e o salário é R$" + str(self.salario))
-
-Func1 = Funcionarios("Obama", 20000)
-Func1.listFunc()
-print(hasattr(Func1, "nome"))
-print(hasattr(Func1, "salario"))
-print(setattr(Func1, "salario", 4500))
-print(hasattr(Func1, "salario"))
-print(getattr(Func1, "salario"))
-print(delattr(Func1, "salario"))
-print(hasattr(Func1, "salario"), "\n")
-
-
-class Circulo():
-  pi = 3.14
-
-  def __init__(self, raio = 5):
-    self.raio = raio
+# Classe
+class Hangman:
   
-  def area(self):
-    return (self.raio * self.raio) * Circulo.pi
+  # Método Construtor
+  def __init__(self, word):
+    self.word = word
+    self.missed_letters = []
+    self.guessed_letters = []
+
+	# Método para adivinhar a letra
+  def guess(self, letter):
+    if letter in self.word and letter not in self.guessed_letters:
+      self.guessed_letters.append(letter)
+    elif letter not in self.word and letter not in self.missed_letters:
+      self.missed_letters.append(letter)
+    else:
+      return False
+    return True
   
-  def setRaio(self, novo_raio):
-    self.raio = novo_raio
-  
-  def getRaio(self):
-    return self.raio
+	# Método para verificar se o jogo terminou
+  def hangman_over(self):
+    return self.hangman_won() or (len(self.missed_letters) == 6)
+		
+	# Método para verificar se o jogador venceu
+  def hangman_won(self):
+    if '_' not in self.hide_word():
+      return True
+    return False
 
-circ = Circulo()
-print(circ.getRaio())
-circ1 = Circulo(7)
-print(circ1.getRaio())
+	# Método para não mostrar a letra no board
+  def hide_word(self):
+    rtn = ''
+    for letter in self.word:
+      if letter not in self.guessed_letters:
+        rtn += '_'
+      else:
+        rtn += letter
+    return rtn
+		
+	# Método para checar o status do game e imprimir o board na tela
+  def print_game_status(self):
+    print(board[len(self.missed_letters)])
+    print('\nPalavra: ' + self.hide_word())
+    print('\nLetras erradas: ',)
+    for letter in self.missed_letters:
+      print(letter,)
+    print()
+    print('Letras Corretas: ',)
+    for letter in self.guessed_letters:
+      print(letter,)
+    print
+		
 
-print ('O raio é: ', circ.getRaio())
-print('Area igual a: ', circ.area())
+# Função para ler uma palavra de forma aleatória do banco de palavras
+def rand_word():
+  with open("palavras.txt", "rt") as f:
+    bank = f.readlines()
+  return bank[random.randint(0,len(bank))].strip()
 
-circ.setRaio(3)
 
-print ('Novo raio igual a: ', circ.getRaio())
-print('A nova area igual a: ', circ.area())
+# Função Main - Execução do Programa
+def main():
+
+	# Objeto
+  game = Hangman(rand_word())
+
+	# Enquanto o jogo não tiver terminado, print do status, solicita uma letra e faz a leitura do caracter
+  while not game.hangman_over():
+    game.print_game_status()
+    user_input = input('\nDigite uma letra: ')
+    game.guess(user_input)
+	
+	# Verifica o status do jogo
+  game.print_game_status()	
+
+	# De acordo com o status, imprime mensagem na tela para o usuário
+  if game.hangman_won():
+    print ('\nParabéns! Você venceu!!')
+  else:
+    print ('\nGame over! Você perdeu.')
+    print ('A palavra era ' + game.word)
+	
+  print ('\nFoi bom jogar com você! Agora vá estudar!\n')
+
+# Executa o programa		
+if __name__ == "__main__":
+  main()
+
